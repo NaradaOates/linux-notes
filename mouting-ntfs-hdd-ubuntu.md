@@ -34,7 +34,7 @@ My next move was to get the drive's UUID. I did this by entering the following:
 ```bash
 sudo blkid /dev/sda1
 ```
-Block ID queries a specific partitiion and returns detailed information about it. It would return the exact UUID, filesystem, type, and label. This method is more reliable than `lslbk -f` for getting the precise UUID. 
+Block ID queries a specific partitiion and returns detailed information about it. It would return the exact UUID, filesystem, type, and label. Prior research into the process informed me that this method is more reliable than `lslbk -f` for getting the precise UUID. 
 
 **UUID:** `5C82099B8207B32`
 
@@ -43,4 +43,38 @@ After obtaining the UUID, the next part of my plan involved backing up the fstab
 ```bash
 sudo cp /etc/fstab /etc/fstab.backup
 ```
-"Copy" makes a backup copy of the fstab before editing it. A corrupted fstab can prevent Ubuntu from booting properly. I learnt that backing up the fstab is standard practice before editing it. 
+I learnt beforehand that backing up the filesystem table is standard practice before editing it. A corrupted file system table can prevent Ubuntu from booting properly. The "Copy" command makes a backup copy of the filesystem before editing it. 
+
+## Step 6 - Edit the fstab
+```bash
+sudo nano /etc/fstab
+```
+Added the following line at the bottom of the file 
+`UUID=5C82099B8207B32  /mnt/storage  ntfs-3g  defaults,nofail  0  0`
+
+`defaults,nofail` was added so that the device mounts normally and the booting process does not halt if the drive isn't found when I reboot the system. 
+
+The first `0` indicates not to include it in the backup utility and the second `0` is tells the system does not check filesystem integrity on boot. 
+
+The line was saved with `Ctrl+O`, `enter`, and then `Ctrl+X`. 
+
+## Step 7 - Reboot and Test
+My next move wasto test that the test whether it will auto-mount on reboot. This was done by doing:
+```bash
+sudo reboot
+lsblk
+```
+Unfortunately the results of `lsblk` showed that the device was no longer mounted. 
+
+insert results here
+
+My first thought was that it could either be: 
+1) a typo in the UUID
+2) extra spaces or wrong spaces between the fields
+3) or a missing or extra character somewhere
+
+To check the fstab entry if there was a typo, I used: `cat /etc/fstab`. The results are shown below:
+```bash
+UUID=5C82099B8207B32 /mnt/storage ntfs-3g defaults,nofail 0 0
+```
+
