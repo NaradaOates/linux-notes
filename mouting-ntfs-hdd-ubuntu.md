@@ -77,4 +77,35 @@ To check the fstab entry if there was a typo, I used: `cat /etc/fstab`. The resu
 ```bash
 UUID=5C82099B8207B32 /mnt/storage ntfs-3g defaults,nofail 0 0
 ```
+The UUID was then compared to the one found using `sudo blkid /dev/sda1`. This gave me a the following UUID: 
+`5C82099B82097B32` 
 
+This showed me that there was a typo in the UUID as there was a `9` missing. 
+
+**What I entered:** `5C82099B8207B32` 
+
+**Correct UUID:** `5C82099B82097B32` 
+
+## Step 8 - Correct the UUID 
+To add the missing `9` I reopend the fstab using: `sudo nano /etc/fstab`. I then found the line with the UUID and added the missing `9` to it. 
+```bash
+UUID=5C82099B8207B32 /mnt/storage ntfs-3g defaults,nofail 0 0
+```
+The newly edited line was then saved with `Ctrl+O`, `enter`, and then `Ctrl+X`. 
+
+## Step 9 - Reboot and Test (again) 
+To test if the issue had been resolved, I did the following: 
+```bash
+sudo systemctl daemon-reload
+sudo mount -a
+lsblk
+```
+The first line tells Ubuntu to reload its configuration files, including fstab, without requiring a full reboot. 
+
+The next one **"Mount Al"** mounts everything listed in fstab that isn't already mounted.
+
+Finally, **"list block devices"** lists all storage devices connected to my laptop and their partitions in a tree structure. It also shows the devices names and where they are currently mounted. It confirmed `/mnt/storage` was showing next to `sda1`.
+
+**insert results here**
+
+##Step 10 - 
