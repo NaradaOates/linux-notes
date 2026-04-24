@@ -102,10 +102,20 @@ lsblk
 ```
 The first line tells Ubuntu to reload its configuration files, including fstab, without requiring a full reboot. 
 
-The next one **"Mount Al"** mounts everything listed in fstab that isn't already mounted.
+**"Mount Al"** mounts everything listed in fstab that isn't already mounted.
 
 Finally, **"list block devices"** lists all storage devices connected to my laptop and their partitions in a tree structure. It also shows the devices names and where they are currently mounted. It confirmed `/mnt/storage` was showing next to `sda1`.
 
-**insert results here**
+```bash
+sda      8:0    0 931.5G  0 disk 
+└─sda1   8:1    0 931.5G  0 part /mnt/storage
+```
+Thus, auto-mounting has been successful. So, the drive will automatically be mounted whenever the laptop is booted up. 
 
-##Step 10 - 
+## Key Concepts Learned
+- `lsblk` - lists all block storage devices and their mount points
+- `blkid` - returns precise UUID and filesystem information for the partition
+- `/etc/fstab` - configuration file that controls the automatic mounting at boot
+- `ntfs-3g` - the linux driver required for read and write access to NTFS drives
+- `nofail` - prevents boot failure if the drive is not accessible
+- Mounting by UUID is safer than by device name (`/dev/sda1`) as device names can change between reboots and the UUID is designed to be unique. 
